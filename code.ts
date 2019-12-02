@@ -73,14 +73,14 @@ async function updateText(selectedItem, pasteValue, symbolType) {
   if(selectedItemFontName.family == 'SF Pro Display' || selectedItemFontName.family == 'SF Compact Display'){
     if(symbolType == "material-icons"){
       let tempFontName = {family: '', style: ''}
-      tempFontName.family = 'Material Icons'
+      tempFontName.family = 'codicon'
       tempFontName.style = "Regular"
       await figma.loadFontAsync({ family: tempFontName.family, style: tempFontName.style })
       selectedItem.setRangeFontName(0, selectedItem.characters.length, tempFontName)
     }else{
       await figma.loadFontAsync({ family: selectedItemFontName.family, style: selectedItemFontName.style })
     }
-  }else if(selectedItemFontName.family == 'Material Icons'){
+  }else if(selectedItemFontName.family == 'codicon'){
     if(symbolType == "sf-symbols"){
       let tempFontName = {family: '', style: ''}
       tempFontName.family = 'SF Pro Display'
@@ -99,7 +99,7 @@ async function updateText(selectedItem, pasteValue, symbolType) {
       selectedItem.setRangeFontName(0, selectedItem.characters.length, tempFontName)
     }else{
       let tempFontName = {family: '', style: ''}
-      tempFontName.family = 'Material Icons'
+      tempFontName.family = 'codicon'
       tempFontName.style = "Regular"
       await figma.loadFontAsync({ family: tempFontName.family, style: tempFontName.style })
       selectedItem.setRangeFontName(0, selectedItem.characters.length, tempFontName)
@@ -127,7 +127,7 @@ async function updateText(selectedItem, pasteValue, symbolType) {
 async function createTextAndPaste(pasteValue, symbolType) {
   let tempFontName = {family: '', style: ''}
   if(symbolType == "material-icons"){
-    tempFontName.family = 'Material Icons'
+    tempFontName.family = 'codicon'
     tempFontName.style = "Regular"
   }else{
     tempFontName.family = 'SF Pro Display'

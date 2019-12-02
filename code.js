@@ -79,7 +79,7 @@ function updateText(selectedItem, pasteValue, symbolType) {
         if (selectedItemFontName.family == 'SF Pro Display' || selectedItemFontName.family == 'SF Compact Display') {
             if (symbolType == "material-icons") {
                 let tempFontName = { family: '', style: '' };
-                tempFontName.family = 'Material Icons';
+                tempFontName.family = 'codicon';
                 tempFontName.style = "Regular";
                 yield figma.loadFontAsync({ family: tempFontName.family, style: tempFontName.style });
                 selectedItem.setRangeFontName(0, selectedItem.characters.length, tempFontName);
@@ -88,7 +88,7 @@ function updateText(selectedItem, pasteValue, symbolType) {
                 yield figma.loadFontAsync({ family: selectedItemFontName.family, style: selectedItemFontName.style });
             }
         }
-        else if (selectedItemFontName.family == 'Material Icons') {
+        else if (selectedItemFontName.family == 'codicon') {
             if (symbolType == "sf-symbols") {
                 let tempFontName = { family: '', style: '' };
                 tempFontName.family = 'SF Pro Display';
@@ -110,7 +110,7 @@ function updateText(selectedItem, pasteValue, symbolType) {
             }
             else {
                 let tempFontName = { family: '', style: '' };
-                tempFontName.family = 'Material Icons';
+                tempFontName.family = 'codicon';
                 tempFontName.style = "Regular";
                 yield figma.loadFontAsync({ family: tempFontName.family, style: tempFontName.style });
                 selectedItem.setRangeFontName(0, selectedItem.characters.length, tempFontName);
@@ -139,7 +139,7 @@ function createTextAndPaste(pasteValue, symbolType) {
     return __awaiter(this, void 0, void 0, function* () {
         let tempFontName = { family: '', style: '' };
         if (symbolType == "material-icons") {
-            tempFontName.family = 'Material Icons';
+            tempFontName.family = 'codicon';
             tempFontName.style = "Regular";
         }
         else {
