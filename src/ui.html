@@ -1,0 +1,630 @@
+<div id="main-view">
+  <div id="navbar">
+    <div id="symbol-type" class="clearfix">
+      <div id="symbol-type-codicon" class="symbol-type-item">
+        
+      </div>
+      <div id="symbol-type-seti" class="symbol-type-item">
+        
+      </div>
+    </div>
+    <div id="display-type" class="clearfix">
+      <div id="display-type-symbols" class="display-type-item">
+        􀇹
+      </div>
+      <div id="display-type-tile" class="display-type-item active">
+        􀛧
+      </div>
+      <div id="display-type-list" class="display-type-item">
+        􀋱
+      </div>
+    </div>
+    <input
+      type="text"
+      id="search"
+      placeholder="􀊫 search"
+      onkeyup="filterBySearchAndCategory()"
+    />
+    <div id="search-reset" class="hidden" onclick="resetSearch()">
+      􀁑
+    </div>
+    <div id="settings-button">
+      􀍠
+    </div>
+  </div>
+  <div id="toast-message">
+    Toast Message
+  </div>
+  <div id="symbols-category">
+    <select id="sf-category" class="category-select" onchange="filterBySearchAndCategory()"><option value="">All</option></select>
+    <select id="mi-category" class="category-select" onchange="filterBySearchAndCategory()"><option value="">All</option></select>
+  </div>
+  <div id="symbols-table" class="clearfix loading"></div>
+  <div id="install-font-seti" class="install-font hidden">
+    <p class="title">
+      Please install the "Seti" icon font in order to display the icons.
+    </p>
+    <p class="subtle">
+      (Run this plugin again after installing the fonts.)
+    </p>
+    <a
+      href="https://github.com/jesseweed/seti-ui/blob/master/styles/_fonts/seti/seti.ttf"
+      target="_blank"
+      class="button"
+      >Download Page</a
+    >
+  </div>
+  <div id="install-font-codicon" class="install-font hidden">
+    <p class="title">
+      Please install the "Codicon" icon font in order to display the icons.
+    </p>
+    <p class="subtle">
+      (Run this plugin again after installing the font.)
+    </p>
+    <a
+      href="https://github.com/microsoft/vscode-codicons/blob/master/dist/codicon.ttf"
+      target="_blank"
+      class="button"
+      >Download Codicons</a
+    >
+  </div>
+</div>
+<div id="settings-view" class="hidden">
+  <div id="settings-navbar">
+    <div id="settings-close">
+      􀅾
+    </div>
+    Settings
+  </div>
+  <div id="settings-body">
+    <div class="setting-item">
+      <span>When click symbols:</span>
+      <select id="settings-click-action" onchange="setClickActionSetting(this)">
+        <option value="create">Create new text object always</option>
+        <option value="copy">Copy to Clipboard</option>
+        <option value="paste">Copy & Paste to selected text objects</option>
+      </select>
+    </div>
+    <div class="setting-item">
+      <span>Window height size:</span>
+      <input
+        id="settings-window-height"
+        onchange="setWindowHeightSetting(this)"
+        type="number"
+        min="200"
+        max="1000"
+      />
+    </div>
+    <div class="setting-item">
+      <span>Default font size:</span>
+      <input
+        id="settings-font-size"
+        onchange="setFontSizeSetting(this)"
+        type="number"
+        min="8"
+        max="1000"
+      />
+    </div>
+  </div>
+</div>
+<textarea></textarea>
+<script type="text/javascript">
+  const setiCsvFileName =
+    "https://gist.githubusercontent.com/misolori/e1f0a2513177bda2dddc78f89c39b4a7/raw/seti.csv?v=2";
+  const codiconCsvFileName =
+    "https://gist.githubusercontent.com/misolori/55f94b44ad044f625b3ba114b7e209ea/raw/codicon.csv?v=13";
+  const mainView = document.getElementById("main-view");
+  const settingsView = document.getElementById("settings-view");
+  const symbolsTable = document.getElementById("symbols-table");
+  const navbar = document.getElementById("navbar");
+  const installFont = document.getElementById("install-font-codicon");
+  const searchField = document.getElementById("search");
+  const searchReset = document.getElementById("search-reset");
+  const sfCategorySelector = document.getElementById('sf-category');
+  const miCategorySelector = document.getElementById('mi-category');
+  const toastMessage = document.getElementById("toast-message");
+  const displayTypeItem = document.getElementsByClassName("display-type-item");
+  const displayTypeClassList = getDisplayTypeClassList();
+  const symbolTypeItem = document.getElementsByClassName("symbol-type-item");
+  const symbolTypeClassList = getSymbolTypeClassList();
+
+  var canUsePlugin = false;
+  var toastID = (searchKeyword = "");
+  var masterDataSF = (masterData = masterDataSeti = []);
+  var settingsData = {};
+  var installCheckCodiconFont = false;
+  var installCheckSetiFont = false;
+
+  symbolsTable.classList.add("hidden");
+  navbar.classList.add("hidden");
+
+  window.onload = function() {
+    let detective = new Detector();
+    if (detective.detect("Codicon") == true || detective.detect("Seti") == true) {
+      init();
+      canUsePlugin = true;
+    } else {
+      // console.log('not install!')
+      installFont.classList.remove("hidden");
+    }
+  };
+
+  function init() {
+    symbolsTable.classList.remove("hidden");
+    navbar.classList.remove("hidden");
+    for (let i = 0; i < displayTypeItem.length; i++) {
+      displayTypeItem[i].addEventListener(
+        "click",
+        function(e) {
+          chnageDisplayType(e.target.getAttribute("id"));
+          updateSettings();
+        },
+        false
+      );
+    }
+    for (let i = 0; i < symbolTypeItem.length; i++) {
+      symbolTypeItem[i].addEventListener(
+        "click",
+        function(e) {
+          chnageSymbolType(e.target.getAttribute("id"));
+          updateSettings();
+        },
+        false
+      );
+    }
+    document.getElementById("settings-button").addEventListener(
+      "click",
+      function(e) {
+        mainView.classList.add("hidden");
+        settingsView.classList.remove("hidden");
+      },
+      false
+    );
+    document.getElementById("settings-close").addEventListener(
+      "click",
+      function(e) {
+        mainView.classList.remove("hidden");
+        settingsView.classList.add("hidden");
+      },
+      false
+    );
+
+    getCSV();
+  }
+
+  // response to message from code.ts
+  onmessage = event => {
+    if (canUsePlugin && event.data.pluginMessage.settings) {
+      settingsData = event.data.pluginMessage.data;
+      settingsInit();
+    }
+  };
+
+  // change display type of symbols list
+  function chnageDisplayType(targetId) {
+    for (let j = 0; j < displayTypeItem.length; j++) {
+      displayTypeItem[j].classList.remove("active");
+    }
+    for (let i = 0; i < displayTypeItem.length; i++) {
+      symbolsTable.classList.remove(displayTypeItem[i].getAttribute("id"));
+    }
+    document.getElementById(targetId).classList.add("active");
+    symbolsTable.classList.add(targetId);
+    settingsData.displayType = targetId;
+  }
+
+  // change symbol type
+  function chnageSymbolType(targetId) {
+    toastMessage.classList.remove("show");
+    for (let j = 0; j < symbolTypeItem.length; j++) {
+      symbolTypeItem[j].classList.remove("active");
+    }
+    for (let i = 0; i < symbolTypeItem.length; i++) {
+      symbolsTable.classList.remove(symbolTypeItem[i].getAttribute("id"));
+      toastMessage.classList.remove(symbolTypeItem[i].getAttribute("id"));
+    }
+    document.getElementById(targetId).classList.add("active");
+    settingsData.symbolType = targetId;
+
+    if (targetId == "symbol-type-codicon" && installCheckCodiconFont == false) {
+      mainView.classList.add("codicon-icons-hidden");
+      let detective = new Detector();
+      // check installing fonts: 'codicon'
+      if (detective.detect("codicon") == true) {
+        // console.log('installed!')
+        installCheckCodiconFont = true;
+        mainView.classList.remove("codicon-icons-hidden");
+        document.getElementById("install-font-codicon").classList.add("hidden");
+      } else {
+        // console.log('not install!')
+        document
+          .getElementById("install-font-codicon")
+          .classList.remove("hidden");
+      }
+    } else if(targetId == "symbol-type-seti" && installCheckSetiFont == false){
+      mainView.classList.add("seti-icons-hidden");
+      let detective = new Detector();
+      if (detective.detect("seti") == true) {
+        // console.log('installed!')
+        installCheckSetiFont = true;
+        mainView.classList.remove("seti-icons-hidden");
+        document.getElementById("install-font-seti").classList.add("hidden");
+      } else {
+        // console.log('not install!')
+        document
+          .getElementById("install-font-seti")
+          .classList.remove("hidden");
+      }
+      
+
+    } else {
+      document.getElementById("install-font-seti").classList.add("hidden");
+    }
+
+    symbolsTable.classList.add(targetId);
+    toastMessage.classList.add(targetId);
+  }
+
+  // set symbol-click-action settings
+  function setClickActionSetting(object) {
+    settingsData.clickAction = object.options[object.selectedIndex].value;
+    updateSettings();
+  }
+
+  // set window height size setting
+  function setWindowHeightSetting(object) {
+    if (object.value < 200) {
+      object.value = 200;
+    }
+    if (object.value > 1000) {
+      object.value = 1000;
+    }
+    settingsData.windowHeight = object.value;
+    updateSettings();
+  }
+
+  // set default font size setting
+  function setFontSizeSetting(object) {
+    if (object.value < 8) {
+      object.value = 8;
+    }
+    if (object.value > 1000) {
+      object.value = 1000;
+    }
+    settingsData.fontSize = object.value;
+    updateSettings();
+  }
+
+  // send message update settings to code.ts
+  function updateSettings() {
+    parent.postMessage(
+      {
+        pluginMessage: {
+          updatedSettingsData: settingsData
+        }
+      },
+      "*"
+    );
+  }
+
+  // initialize settings
+  function settingsInit() {
+    chnageDisplayType(settingsData.displayType);
+    chnageSymbolType(settingsData.symbolType);
+    let settingClickAction = document.getElementById("settings-click-action");
+    for (i = 0; settingClickAction.options.length > i; i++) {
+      if (settingClickAction.options[i].value == settingsData.clickAction) {
+        settingClickAction.options[i].selected = true;
+        break;
+      }
+    }
+    let settingWindowHeight = document.getElementById("settings-window-height");
+    settingWindowHeight.value = settingsData.windowHeight;
+    let settingFontSize = document.getElementById("settings-font-size");
+    settingFontSize.value = settingsData.fontSize;
+  }
+
+  // get display type list
+  function getDisplayTypeClassList() {
+    let classList = "";
+    for (let i = 0; i < displayTypeItem.length; i++) {
+      classList += displayTypeItem[i].getAttribute("id") + ",";
+    }
+    return classList;
+  }
+
+  // get symbol type list
+  function getSymbolTypeClassList() {
+    let classList = "";
+    for (let i = 0; i < symbolTypeItem.length; i++) {
+      classList += symbolTypeItem[i].getAttribute("id") + ",";
+    }
+    return classList;
+  }
+
+  // search event
+  function filterBySearchAndCategory() {
+    let sfFilterCategory =
+      sfCategorySelector.options[sfCategorySelector.selectedIndex].value;
+    let miFilterCategory =
+      miCategorySelector.options[miCategorySelector.selectedIndex].value;
+    if (
+      searchKeyword == searchField.value &&
+      sfCurrentCategory == sfFilterCategory &&
+      miCurrentCategory == miFilterCategory
+    ) {
+      return false;
+    } else {
+      searchKeyword = searchField.value;
+      sfCurrentCategory = sfFilterCategory;
+      miCurrentCategory = miFilterCategory;
+    }
+    if (searchKeyword.length > 0) {
+      searchReset.classList.remove("hidden");
+    } else {
+      searchReset.classList.add("hidden");
+    }
+    let wordArray = searchKeyword.split(/\s/);
+
+    let filteredList = [];
+    let sfFilteredList = [];
+    let miFilteredList = [];
+    if (sfCurrentCategory) {
+      let regex = new RegExp(sfCurrentCategory);
+      sfFilteredList = masterDataSF.filter(function(value) {
+        return regex.test(value.category);
+      });
+      filteredList = filteredList.concat(masterDataSeti)
+    } else {
+      sfFilteredList = masterDataSF;
+    }
+    if (miCurrentCategory) {
+      let regex = new RegExp(miCurrentCategory);
+      miFilteredList = masterDataSeti.filter(function(value) {
+        return regex.test(value.category);
+      });
+    } else {
+      miFilteredList = masterDataSeti;
+    }
+    filteredList = sfFilteredList.concat(miFilteredList);
+
+    for (let i = 0; i < wordArray.length; i++) {
+      filteredList = filteringList(filteredList, wordArray[i]);
+    }
+    createGlyphList(filteredList);
+  }
+
+  // Reset search word
+  function resetSearch() {
+    searchField.value = "";
+    searchReset.classList.add("hidden");
+    filterBySearchAndCategory();
+  }
+
+  // filter symbols list with search word
+  function filteringList(list, filterWord) {
+    let regex = new RegExp(filterWord);
+    let filteredList = list.filter(function(value) {
+      return regex.test(value.search_keyword);
+    });
+    return filteredList;
+  }
+
+  // click glyph action
+  function clickGlyph(event) {
+    let glyph = event.target.getAttribute("data-glyph");
+    let symbolType = event.target.getAttribute("data-symbol-type");
+    let textarea = document.getElementsByTagName("textarea")[0];
+    let message = "";
+    window.clearTimeout(toastID);
+    if (settingsData.clickAction != "create") {
+      textarea.value = glyph;
+      textarea.select();
+      document.execCommand("copy");
+      message =
+        settingsData.clickAction == "copy"
+          ? "Copied symbol"
+          : "Copied & Pasted symbol";
+    } else {
+      message = "Create new symbol object";
+    }
+    toastMessage.innerHTML = message + ": <span>" + glyph + "</span>";
+    toastMessage.classList.add("show");
+    toastID = window.setTimeout(function() {
+      toastMessage.classList.remove("show");
+    }, 2000);
+    parent.postMessage(
+      {
+        pluginMessage: {
+          copied: true,
+          copiedGlyph: glyph,
+          symbolType: symbolType
+        }
+      },
+      "*"
+    );
+  }
+
+  // create dom of glyph list
+  function createGlyphList(data) {
+    symbolsTable.innerHTML = "";
+    data.forEach(val => {
+      // console.log(val.character)
+      let divWrapper = document.createElement("div");
+      let divGlyph = document.createElement("div");
+      let divName = document.createElement("div");
+      divWrapper.classList.add("symbol-item", val.symbol_type);
+      divGlyph.classList.add("symbol-item-glyph");
+      divName.classList.add("symbol-item-Name");
+      divGlyph.textContent = val.character;
+      divName.textContent = val.short_name;
+      divWrapper.appendChild(divGlyph);
+      divWrapper.appendChild(divName);
+      divWrapper.setAttribute("data-glyph", val.character);
+      divWrapper.setAttribute("data-symbol-type", val.symbol_type);
+      divWrapper.setAttribute("data-keyword", val.search_keyword);
+      divWrapper.setAttribute("data-category", val.category);
+      divWrapper.addEventListener(
+        "click",
+        function(e) {
+          clickGlyph(e);
+        },
+        false
+      );
+      symbolsTable.appendChild(divWrapper);
+    });
+  }
+
+  // download csv file
+  function getCSV() {
+    let promise_codicon = new Promise((resolve, reject) => {
+      let reqSF = new XMLHttpRequest();
+      reqSF.open("get", codiconCsvFileName, true);
+      reqSF.send(null);
+
+      reqSF.onload = function() {
+        masterDataSF = csv2json(reqSF.responseText, "codicon");
+        resolve(true);
+      };
+    });
+
+    promise_codicon.then(response => {
+      let promise_seti = new Promise((resolve, reject) => {
+        let reqMI = new XMLHttpRequest();
+        reqMI.open("get", setiCsvFileName, true);
+        reqMI.send(null);
+
+        reqMI.onload = function() {
+          masterDataSeti = csv2json(reqMI.responseText, "seti");
+          resolve(true);
+        };
+      }).then(response => {
+        masterData = masterDataSF.concat(masterDataSeti);
+        symbolsTable.classList.remove("loading");
+        createGlyphList(masterData);
+      });
+    });
+  }
+
+  // convert csv to json
+  function csv2json(csv, type) {
+    var jsonArray = [];
+    var csvArray = csv.split("\n");
+    var items = csvArray[0].split(",");
+
+    for (var i = 1; i < csvArray.length - 1; i++) {
+      let a_line = new Object();
+      let master_line = new Object();
+      let csvArrayD = csvArray[i].split(/\,(?=(?:[^"]*"[^"]*")*[^"]*$)/);
+
+      for (var j = 0; j < items.length; j++) {
+        a_line[items[j]] = csvArrayD[j];
+      }
+
+      if (type == "codicon") {
+        master_line.short_name = a_line.short_name.replace(/[\.\-]/g, " ");
+        master_line.search_keyword =
+          a_line.short_name +
+          ";" +
+          a_line.additional_search_metadata +
+          ";" +
+          a_line.semantic_name_1 +
+          ";" +
+          a_line.semantic_name_2 +
+          ";" +
+          a_line.semantic_name_3;
+        master_line.symbol_type = "codicon-icons";
+        master_line.character = a_line.character;
+        master_line.category = a_line.categories;
+      } else {
+        master_line.short_name = a_line.short_name.replace(/[\.\-]/g, " ");
+        master_line.search_keyword = a_line.short_name;
+        master_line.symbol_type = "seti-icons";
+        master_line.character = a_line.character;
+        master_line.category = a_line.categories;
+      }
+      jsonArray.push(master_line);
+    }
+    return jsonArray;
+  }
+
+  // uppercase first glyph of the word
+  function capitalize(str) {
+    // console.log(str)
+    let words = str.split(" ");
+    let capitalize_word = "";
+    if (words.length > 1) {
+      for (let i = 0; i < words.length; i++) {
+        if (capitalize_word) {
+          capitalize_word += " ";
+        }
+        capitalize_word +=
+          words[i].charAt(0).toUpperCase() + words[i].slice(1).toLowerCase();
+      }
+    } else {
+      capitalize_word =
+        str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    }
+    return capitalize_word;
+  }
+
+  /**
+   * JavaScript code to detect available availability of a
+   * particular font in a browser using JavaScript and CSS.
+   *
+   * Author : Lalit Patel
+   * Website: http://www.lalit.org/lab/javascript-css-font-detect/
+   * License: Apache Software License 2.0
+   *          http://www.apache.org/licenses/LICENSE-2.0
+   */
+
+  /**
+   * Usage: d = new Detector();
+   *        d.detect('font name');
+   */
+  var Detector = function() {
+    // a font will be compared against all the three default fonts.
+    // and if it doesn't match all 3 then that font is not available.
+    var baseFonts = ["monospace", "sans-serif", "serif"];
+
+    //we use m or w because these two characters take up the maximum width.
+    // And we use a LLi so that the same matching fonts can get separated
+    var testString = "mmmmmmmmmmlli";
+
+    //we test using 72px font size, we may use any size. I guess larger the better.
+    var testSize = "72px";
+
+    var h = document.getElementsByTagName("body")[0];
+
+    // create a SPAN in the document to get the width of the text we use to test
+    var s = document.createElement("span");
+    s.style.fontSize = testSize;
+    s.innerHTML = testString;
+    var defaultWidth = {};
+    var defaultHeight = {};
+    for (var index in baseFonts) {
+      //get the default width for the three base fonts
+      s.style.fontFamily = baseFonts[index];
+      h.appendChild(s);
+      defaultWidth[baseFonts[index]] = s.offsetWidth; //width for the default font
+      defaultHeight[baseFonts[index]] = s.offsetHeight; //height for the defualt font
+      h.removeChild(s);
+    }
+
+    function detect(font) {
+      var detected = false;
+      for (var index in baseFonts) {
+        s.style.fontFamily = font + "," + baseFonts[index]; // name of the font along with the base font for fallback.
+        h.appendChild(s);
+        var matched =
+          s.offsetWidth != defaultWidth[baseFonts[index]] ||
+          s.offsetHeight != defaultHeight[baseFonts[index]];
+        h.removeChild(s);
+        detected = detected || matched;
+      }
+      return detected;
+    }
+
+    this.detect = detect;
+  };
+</script>

@@ -1,0 +1,363 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
+    sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  background: #222;
+  margin: 0;
+  padding: 50px 5px 20px;
+  font-size: 16px;
+  color: #fff;
+}
+.symbol-item-Name {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
+    sans-serif, Apple Color Emoji, Segoe UI Emoji;
+}
+.symbol-type-seti {
+  font-family: "seti";
+}
+.symbol-type-item {
+  font-family: "codicon";
+}
+.clearfix::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.hidden {
+  display: none;
+}
+.loading {
+  background-image: url("https://raw.githubusercontent.com/kudakurage/figma-symbols-browser/master/assets/loading.gif");
+  background-position: center center;
+  background-repeat: no-repeat;
+  min-height: 200px;
+}
+textarea {
+  height: 1px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+}
+#navbar,
+#settings-navbar {
+  position: fixed;
+  background: #333;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 44px;
+  line-height: 30px;
+  padding: 7px 0 7px 7px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #555;
+  z-index: 10;
+  user-select: none;
+}
+#symbol-type {
+  float: left;
+  font-weight: bold;
+  margin-right: 7px;
+}
+#symbol-type div {
+  float: left;
+  min-width: 20px;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 5px;
+  font-size: 20px;
+  background: #555;
+  text-align: center;
+  cursor: pointer;
+}
+#search {
+  float: left;
+  font-size: 15px;
+  width: 160px;
+  height: 30px;
+  line-height: 30px;
+  margin-right: 4px;
+  padding: 0 5px;
+  border: 0;
+  border-radius: 4px;
+  background: #555;
+  color: #fff;
+  user-select: auto;
+}
+#search-reset {
+  position: absolute;
+  margin-left: 300px;
+  font-size: 14px;
+  height: 30px;
+  width: 25px;
+  color: #ccc;
+  text-align: center;
+  cursor: pointer;
+}
+#search-reset:hover {
+  color: #fff;
+}
+#display-type {
+  float: left;
+  margin-right: 7px;
+}
+#display-type div {
+  float: left;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 5px;
+  background: #555;
+  text-align: center;
+  cursor: pointer;
+}
+#symbol-type div:first-child,
+#display-type div:first-child {
+  border-radius: 4px 0 0 4px;
+}
+#symbol-type div:last-child,
+#display-type div:last-child {
+  border-radius: 0 4px 4px 0;
+}
+#symbol-type .active,
+#display-type .active {
+  background: #aaa;
+  color: #222;
+}
+#symbols-table {
+  padding: 10px 0 0;
+  user-select: none;
+}
+.symbol-item {
+  height: 90px;
+  width: 90px;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  text-align: center;
+  float: left;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.symbol-item:hover {
+  background: #444;
+}
+.symbol-item:active {
+  background: #007aff;
+  border-color: #007aff;
+}
+.symbol-item-glyph {
+  height: 60px;
+  width: 90px;
+  font-size: 32px;
+  line-height: 60px;
+  pointer-events: none;
+  vertical-align: middle;
+}
+.symbol-item-name {
+  height: 30px;
+  width: 80px;
+  padding: 0 5px;
+  font-size: 13px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  pointer-events: none;
+}
+
+#symbols-table.symbol-type-codicon .seti-icons,
+#symbols-table.symbol-type-seti .codicon-icons {
+  display: none;
+}
+
+.seti-icons-hidden #symbols-table .seti-icons,
+.codicon-icons-hidden #symbols-table .codicon-icons {
+  display: none;
+}
+.display-type-symbols .symbol-item {
+  height: 50px;
+  width: 60px;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.display-type-symbols .symbol-item-glyph {
+  height: 50px;
+  width: 60px;
+  font-size: 24px;
+  line-height: 50px;
+}
+.display-type-symbols .symbol-item-name {
+  display: none;
+}
+.display-type-list .symbol-item {
+  height: 30px;
+  line-height: 30px;
+  width: 100%;
+  margin: 0 -5px;
+  padding: 0 5px;
+  border-radius: 0;
+  text-align: left;
+  float: none;
+  cursor: pointer;
+}
+.display-type-list .symbol-item:nth-child(2n-1) {
+  background: #333;
+}
+.display-type-list .symbol-item:hover {
+  background: #444;
+}
+.display-type-list .symbol-item:active {
+  background: #007aff;
+}
+.display-type-list .symbol-item-glyph {
+  float: left;
+  height: 30px;
+  width: 40px;
+  margin: 0;
+  text-align: center;
+  font-size: 18px;
+  line-height: 30px;
+  border: 0;
+}
+.display-type-list .symbol-item-name {
+  height: 30px;
+  width: auto;
+  padding: 0 10px;
+  font-size: 15px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.codicon-icons .symbol-item-glyph {
+  font-family: "codicon";
+  font-size: 36px;
+}
+.display-type-symbols .codicon-icons .symbol-item-glyph {
+  font-size: 28px;
+}
+.display-type-list .codicon-icons .symbol-item-glyph {
+  font-size: 22px;
+}
+#toast-message {
+  background: rgba(0, 122, 255, 0.9);
+  position: fixed;
+  top: 20px;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  box-sizing: border-box;
+  margin-top: 0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 0;
+  opacity: 0;
+  transition: 0.3s;
+  user-select: none;
+}
+#toast-message.symbol-type-codicon span {
+  font-family: "codicon";
+  vertical-align: bottom;
+}
+#symbols-category {
+  display: none;
+  margin: -5px 5px 0;
+  border-bottom: 1px solid #333;
+}
+.category-select {
+  line-height: 40px;
+  height: 40px;
+  font-size: 16px;
+  border: 0;
+  background: none;
+  width: 350px;
+  color: #fff;
+  outline: none;
+}
+.install-font {
+  padding: 30px 10px;
+}
+.install-font .title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+.install-font .subtle {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 30px;
+}
+.install-font .button {
+  display: block;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  background: #007aff;
+  border-radius: 5px;
+  line-height: 50px;
+  text-decoration: none;
+}
+.install-font .button:hover {
+  opacity: 0.8;
+}
+#settings-navbar {
+  padding-left: 15px;
+}
+#settings-button,
+#settings-close {
+  float: left;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 5px;
+}
+#settings-button:hover,
+#settings-close:hover {
+  background: #444;
+}
+#settings-close {
+  float: right;
+  margin-right: 4px;
+}
+#settings-body {
+  padding: 15px;
+  font-size: 14px;
+}
+#settings-body .setting-item {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #333;
+}
+#settings-body .setting-item span {
+  display: inline-block;
+  width: 125px;
+  user-select: none;
+}
+#settings-body select {
+  width: 200px;
+  height: 28px;
+  font-size: 15px;
+}
+#settings-body input {
+  width: 200px;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 15px;
+}
+.copyright {
+  font-size: 11px;
+  color: #666;
+  margin-top: 20px;
+  text-align: center;
+}
+.copyright a {
+  color: #666;
+  text-decoration: none;
+}
+.copyright a:hover {
+  color: #999;
+}

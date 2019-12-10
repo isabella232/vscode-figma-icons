@@ -10,13 +10,13 @@ figma.showUI(__html__)
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
-const storageKey = 'settingsData'
+const storageKey = 'iconsSettingsData'
 const defaultDisplayType = 'display-type-tile'
-const defaultSymbolType = 'symbol-type-sfsymbols'
+const defaultSymbolType = 'symbol-type-codicon'
 const defaultSettingsData = { clickAction: 'create', displayType: defaultDisplayType, symbolType: defaultSymbolType, windowHeight: 600, fontSize: 40 }
 var settingsData = JSON.parse(JSON.stringify(defaultSettingsData));
 var textObjectLength = 0
-init()
+
 
 function init(){
   figma.clientStorage.getAsync(storageKey).then(result => {
@@ -70,41 +70,23 @@ function createFunction(copiedText, symbolType){
 async function updateText(selectedItem, pasteValue, symbolType) {
   let selectedItemFontName = selectedItem.getRangeFontName(0, 1)
   let textStyleId = selectedItem.getRangeTextStyleId(0, 1)
-  if(selectedItemFontName.family == 'SF Pro Display' || selectedItemFontName.family == 'SF Compact Display'){
-    if(symbolType == "material-icons"){
-      let tempFontName = {family: '', style: ''}
-      tempFontName.family = 'codicon'
-      tempFontName.style = "Regular"
-      await figma.loadFontAsync({ family: tempFontName.family, style: tempFontName.style })
-      selectedItem.setRangeFontName(0, selectedItem.characters.length, tempFontName)
-    }else{
-      await figma.loadFontAsync({ family: selectedItemFontName.family, style: selectedItemFontName.style })
-    }
-  }else if(selectedItemFontName.family == 'codicon'){
-    if(symbolType == "sf-symbols"){
-      let tempFontName = {family: '', style: ''}
-      tempFontName.family = 'SF Pro Display'
-      tempFontName.style = "Regular"
-      await figma.loadFontAsync({ family: tempFontName.family, style: tempFontName.style })
-      selectedItem.setRangeFontName(0, selectedItem.characters.length, tempFontName)
-    }else{
-      await figma.loadFontAsync({ family: selectedItemFontName.family, style: selectedItemFontName.style })
-    }
-  }else{
-    if(symbolType == "sf-symbols"){
-      let tempFontName = {family: '', style: ''}
-      tempFontName.family = 'SF Pro Display'
-      tempFontName.style = "Regular"
-      await figma.loadFontAsync({ family: tempFontName.family, style: tempFontName.style })
-      selectedItem.setRangeFontName(0, selectedItem.characters.length, tempFontName)
-    }else{
-      let tempFontName = {family: '', style: ''}
-      tempFontName.family = 'codicon'
-      tempFontName.style = "Regular"
-      await figma.loadFontAsync({ family: tempFontName.family, style: tempFontName.style })
-      selectedItem.setRangeFontName(0, selectedItem.characters.length, tempFontName)
-    }
+ 
+  if (symbolType == "codicon-icons") {
+    let tempFontName = { family: '', style: '' }
+    tempFontName.family = 'codicon'
+    tempFontName.style = "Regular"
+    await figma.loadFontAsync({ family: tempFontName.family, style: tempFontName.style })
+    selectedItem.setRangeFontName(0, selectedItem.characters.length, tempFontName)
+    await figma.loadFontAsync({ family: selectedItemFontName.family, style: selectedItemFontName.style })
+  } else if (symbolType == 'seti-icons') {
+    let tempFontName = { family: '', style: '' }
+    tempFontName.family = 'seti'
+    tempFontName.style = "Regular"
+    await figma.loadFontAsync({ family: tempFontName.family, style: tempFontName.style })
+    selectedItem.setRangeFontName(0, selectedItem.characters.length, tempFontName)
+    await figma.loadFontAsync({ family: selectedItemFontName.family, style: selectedItemFontName.style })
   }
+  
 
   if(textStyleId){
     selectedItem.setRangeTextStyleId(0, selectedItem.characters.length, textStyleId)
@@ -126,13 +108,16 @@ async function updateText(selectedItem, pasteValue, symbolType) {
 
 async function createTextAndPaste(pasteValue, symbolType) {
   let tempFontName = {family: '', style: ''}
-  if(symbolType == "material-icons"){
-    tempFontName.family = 'codicon'
-    tempFontName.style = "Regular"
-  }else{
-    tempFontName.family = 'SF Pro Display'
+  
+  if (symbolType == "codicon-icons") {
+  tempFontName.family = 'codicon'
+  tempFontName.style = "Regular"
+  } else if (symbolType == 'seti-icons') {
+    tempFontName.family = 'seti'
     tempFontName.style = "Regular"
   }
+  
+
   await figma.loadFontAsync({ family: tempFontName.family, style: tempFontName.style })
   const newTextNode = figma.createText()
   newTextNode.fontName = tempFontName
@@ -170,3 +155,5 @@ figma.ui.onmessage = message => {
     figma.clientStorage.setAsync(storageKey, JSON.stringify(message.updatedSettingsData))
   }
 }
+
+init()

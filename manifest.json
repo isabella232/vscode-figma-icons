@@ -1,7 +1,7 @@
 {
-  "name": "VS Code Icon Browser",
-  "id": "770570903162993974",
+  "name": "Visual Studio Code Icons",
+  "id": "786075219184960694",
   "api": "1.0.0",
-  "main": "code.js",
-  "ui": "ui.html"
+  "main": "dist/code.js",
+  "ui": "dist/ui.html"
 }
