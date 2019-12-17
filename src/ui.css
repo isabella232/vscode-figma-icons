@@ -7,6 +7,16 @@ body {
   font-size: 16px;
   color: #fff;
 }
+svg {
+  width: 20px;
+  height: 20px;
+}
+svg * {
+  fill: white;
+}
+svg, svg * {
+  pointer-events: none;        
+}
 .symbol-item-Name {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
     sans-serif, Apple Color Emoji, Segoe UI Emoji;
@@ -17,13 +27,18 @@ body {
 .symbol-type-item {
   font-family: "codicon";
 }
+.symbol-type-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .clearfix::after {
   content: "";
   display: block;
   clear: both;
 }
 .hidden {
-  display: none;
+  display: none !important;
 }
 .loading {
   background-image: url("https://raw.githubusercontent.com/kudakurage/figma-symbols-browser/master/assets/loading.gif");
@@ -92,6 +107,13 @@ textarea {
   color: #ccc;
   text-align: center;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#search-reset svg {
+  width: 12px;
+  height: 12px;
 }
 #search-reset:hover {
   color: #fff;
@@ -108,6 +130,9 @@ textarea {
   background: #555;
   text-align: center;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 #symbol-type div:first-child,
 #display-type div:first-child {
@@ -121,6 +146,10 @@ textarea {
 #display-type .active {
   background: #aaa;
   color: #222;
+}
+#symbol-type .active *,
+#display-type .active * {
+  fill: #222;
 }
 #symbols-table {
   padding: 10px 0 0;
@@ -314,6 +343,13 @@ textarea {
   text-align: center;
   cursor: pointer;
   border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#settings-close svg {
+  width: 16px;
+  height: 16px;
 }
 #settings-button:hover,
 #settings-close:hover {

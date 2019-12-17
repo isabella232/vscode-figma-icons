@@ -10,7 +10,7 @@ figma.showUI(__html__)
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
-const storageKey = 'iconsSettingsData'
+const storageKey = 'VSCodeIconsSettingsData'
 const defaultDisplayType = 'display-type-tile'
 const defaultSymbolType = 'symbol-type-codicon'
 const defaultSettingsData = { clickAction: 'create', displayType: defaultDisplayType, symbolType: defaultSymbolType, windowHeight: 600, fontSize: 40 }
