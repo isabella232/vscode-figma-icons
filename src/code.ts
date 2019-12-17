@@ -13,7 +13,7 @@ figma.showUI(__html__)
 const storageKey = 'VSCodeIconsSettingsData'
 const defaultDisplayType = 'display-type-tile'
 const defaultSymbolType = 'symbol-type-codicon'
-const defaultSettingsData = { clickAction: 'create', displayType: defaultDisplayType, symbolType: defaultSymbolType, windowHeight: 600, fontSize: 40 }
+const defaultSettingsData = { clickAction: 'create', displayType: defaultDisplayType, symbolType: defaultSymbolType, windowHeight: 600, fontSize: 16 }
 var settingsData = JSON.parse(JSON.stringify(defaultSettingsData));
 var textObjectLength = 0
 
