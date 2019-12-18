@@ -327,6 +327,7 @@ textarea {
   border-radius: 5px;
   line-height: 50px;
   text-decoration: none;
+  margin-top: 20px;
 }
 .install-font .button:hover {
   opacity: 0.8;
