@@ -103,8 +103,9 @@
 </div>
 <textarea></textarea>
 <script type="text/javascript">
+  let randomID = Math.floor(100000 + Math.random() * 900000);
   const setiCsvFileName =
-    "https://gist.githubusercontent.com/misolori/e1f0a2513177bda2dddc78f89c39b4a7/raw/seti.csv?v=2";
+    "https://gist.githubusercontent.com/misolori/e1f0a2513177bda2dddc78f89c39b4a7/raw/seti.csv?v=" + randomID;
   const codiconCsvFileName =
     "https://gist.githubusercontent.com/misolori/55f94b44ad044f625b3ba114b7e209ea/raw/codicon.csv?v=13";
   const mainView = document.getElementById("main-view");
